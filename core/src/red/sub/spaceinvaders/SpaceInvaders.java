@@ -1,5 +1,6 @@
 package red.sub.spaceinvaders;
 
+import Tools.FontLoader;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,9 +14,11 @@ public class SpaceInvaders extends Game {
     public void create()
     {
         batch = new SpriteBatch();
+        FontLoader.loadFonts();
         
         LevelScreen lvlScr = new LevelScreen(batch);
         this.setScreen(lvlScr);
+        
     }
 	
 }
