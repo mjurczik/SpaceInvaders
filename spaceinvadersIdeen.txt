@@ -1,0 +1,34 @@
+Levelaufbau:
+Level 1
+- normaler ablauf
+- gegner sind weiß
+- normale geschwindigkeit
+
+Level 2 (Rainbow)
+- Gegner wechseln Farbe
+- Geschwindigkeit + 1 
+
+Level 3
+- Gegner werden zyklisch schwarz weiß
+- Geschwindigkeit + 2
+
+Level 4
+- Gegner laufen geteilt 5x5 nach links 5x5 nach rechts
+- Gegner treffen sich in der Mitte
+- Geschwindigkeit + 3
+
+Level 5
+- Gegner pulsieren rot
+- Geschwindigkeit +4
+- Spiel kann nur mit controller gespielt werden
+
+Level 6
+- Geschwindigkeit + 5
+- Gegner bekommen unterschiedliche farben, 3 Farben -> da 3 Gegner Typen
+- Input ist gespiegelt. -> spieler läuft links, <- Spieler läuft rechts
+
+Level 7
+- Geschwindigkeit + 6
+- Gegner bunt
+- Gegner schießen alle gleichzeitig
+- Spieler stirbt höchst wahrscheinlich
