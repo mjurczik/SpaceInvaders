@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 /**
  * @author Marlin Jurczik
  */
-public class Enemy 
+public class Enemy implements Comparable<Enemy>
 {
     private static final int RIGHT = 0;
     private static final int LEFT = 1;
@@ -24,7 +24,6 @@ public class Enemy
     private int moveStep = 20;
     private int moveDirection = RIGHT;
     private boolean active;
-    private EnemyBullet bullet;
     
     private Rectangle collisionRec;
     
@@ -63,18 +62,20 @@ public class Enemy
             x -= xStepSize;
         }
         
-        if(MathUtils.random(100) < 5 && bullet == null)
-            bullet = new EnemyBullet(x + width/2, y + height);
-        
-        
         collisionRec.x = x;
         collisionRec.y = y;
         
     }
     
-    public void removeBullet()
+    @Override
+    public int compareTo(Enemy o)
     {
-        bullet = null;
+        if(this.y == o.y)
+            return 0;
+        else if(this.y < o.y)
+            return 1;
+        else
+            return -1;
     }
     
     public Rectangle getRectangle()
@@ -101,14 +102,19 @@ public class Enemy
     {
         return active;
     }
+
+    public int getWidth()
+    {
+        return width;
+    }
+
+    public int getHeight()
+    {
+        return height;
+    }
     
     public void setActive(boolean active)
     {
         this.active = active;
-    }
-    
-    public EnemyBullet getBullet()
-    {
-        return bullet;
     }
 }

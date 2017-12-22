@@ -20,9 +20,11 @@ public class EnemyManager
     private static final int UPDATE_TIME_OFFSET = 20;
     
     private Array<Enemy> enemies;
+    private Array<EnemyBullet> enemyBullets;
     private Array<Explosion> explosions;
     private static final int E_COUNT_X = 10;
     private static final int E_COUNT_Y = 5;
+    private float bulletProbability = 100;
     
     private Texture invader1Tex;
     private Texture invader2Tex;
@@ -41,12 +43,18 @@ public class EnemyManager
     private long lastUpdateEnemy = 0;
     private long updateEnemyT = 1000;
     private long lastUpdateEnemyBullet = 0;
-    private long updateEnemyBulletT = 100;
+    private final long updateEnemyBulletT = 100;
+    
+    
+    //testing
+    private long last = 0;
+    private long updating = 2000;
     
     public EnemyManager()
     {
         enemies = new Array<Enemy>();
         explosions = new Array<Explosion>();
+        enemyBullets = new Array<EnemyBullet>();
         loadTextures();
         initEnemies();
     }
@@ -84,8 +92,15 @@ public class EnemyManager
     
     public void update()
     {
-        updateEnemyT = (enemies.size * UPDATE_TIME_MULTIPLIER) + UPDATE_TIME_OFFSET;
-        
+
+        updateExplosions();
+        updateEnemies();
+        updateBullets();
+        spawnBullets();  
+    }
+    
+    private void updateExplosions()
+    {
         Iterator<Explosion> iterExplosion = explosions.iterator();
         while(iterExplosion.hasNext())
         {
@@ -94,6 +109,11 @@ public class EnemyManager
             if(!e.isActive())
                 iterExplosion.remove();
         }
+    }
+    
+    private void updateEnemies()
+    {
+        updateEnemyT = (enemies.size * UPDATE_TIME_MULTIPLIER) + UPDATE_TIME_OFFSET;
         
         if(TimeUtils.millis() - lastUpdateEnemy > updateEnemyT)
         {
@@ -102,28 +122,26 @@ public class EnemyManager
             while(iterEnemy.hasNext())
             {
                 Enemy e = iterEnemy.next();
+                e.update();
+                if(!e.isActive())
+                    iterEnemy.remove();
 
-
-                    e.update();
-                    if(!e.isActive())
-                        iterEnemy.remove();
-
-                    frameIdEnemy++;
-                    if(frameIdEnemy > 1)
-                        frameIdEnemy = 0;
+                frameIdEnemy++;
+                if(frameIdEnemy > 1)
+                    frameIdEnemy = 0;
             }  
         }
-        
-        Iterator<Enemy> iterEnemy = enemies.iterator();
-        while (iterEnemy.hasNext())
+    }
+    
+    private void updateBullets()
+    {
+        Iterator<EnemyBullet> iterEnemyBullet = enemyBullets.iterator();
+        while (iterEnemyBullet.hasNext())
         {
-            Enemy e = iterEnemy.next();     
-            if(e.getBullet() != null)
-            {
-                e.getBullet().update();
-                if(!e.getBullet().isActive())
-                    e.removeBullet();
-            }   
+            EnemyBullet b = iterEnemyBullet.next();     
+                b.update();
+                if(!b.isActive())
+                    iterEnemyBullet.remove();
         }
         
         if(TimeUtils.millis() - lastUpdateEnemyBullet > updateEnemyBulletT)
@@ -133,7 +151,25 @@ public class EnemyManager
                 frameIdEnemyBullet = 0;
             lastUpdateEnemyBullet = TimeUtils.millis();
         }
-        
+    }
+    
+    private void spawnBullets()
+    {
+        Enemy[] arrEnemy = new Enemy[10];
+        if(TimeUtils.millis() - last > updating)
+        {
+            last = TimeUtils.millis();
+            enemies.sort();
+            int counter = 0;
+            Iterator<Enemy> iterEnemy = enemies.iterator();
+            while(iterEnemy.hasNext() && counter < 10)
+            {
+                Enemy e = iterEnemy.next();
+                arrEnemy[counter] = e;
+                enemyBullets.add(new EnemyBullet(e.getX() + e.getWidth()/2 - EnemyBullet.WIDTH /2, e.getY() + e.getHeight()));
+                counter++;
+            }
+        }
     }
     
     public void render(SpriteBatch batch)
@@ -147,9 +183,7 @@ public class EnemyManager
                 case 0: batch.draw(invader1Reg[0][frameIdEnemy], e.getX(), e.getY()); break;
                 case 1: batch.draw(invader2Reg[0][frameIdEnemy], e.getX(), e.getY()); break;
                 case 2: batch.draw(invader3Reg[0][frameIdEnemy], e.getX(), e.getY()); break;
-            }
-            if(e.getBullet() != null)
-                batch.draw(enemyBulletReg[0][frameIdEnemyBullet], e.getBullet().getX(), e.getBullet().getY());
+            }                
         }
         
         Iterator<Explosion> iterExplosion = explosions.iterator();
@@ -157,6 +191,13 @@ public class EnemyManager
         {
             Explosion explosion = iterExplosion.next();
             batch.draw(explosionTex, explosion.getX(), explosion.getY());
+        }
+        
+        Iterator<EnemyBullet> iterEnemyBullet = enemyBullets.iterator();
+        while(iterEnemyBullet.hasNext())
+        {
+            EnemyBullet b = iterEnemyBullet.next();
+            batch.draw(enemyBulletReg[0][frameIdEnemyBullet], b.getX(), b.getY());
         }
     }
     
@@ -171,6 +212,11 @@ public class EnemyManager
     public Array<Enemy> getEnemies()
     {
         return enemies;
+    }
+    
+    public Array<EnemyBullet> getEnemyBullets()
+    {
+        return enemyBullets;
     }
     
     public void addExplosion(float x, float y)

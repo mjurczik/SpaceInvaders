@@ -4,6 +4,7 @@ package red.sub.spaceinvaders.GameState;
 
 import GameObject.Bullet;
 import GameObject.Enemy;
+import GameObject.EnemyBullet;
 import GameObject.EnemyManager;
 import GameObject.Ship;
 import Listener.LevelKeyListener;
@@ -94,8 +95,13 @@ public class LevelScreen extends ScreenAdapter
         {
             Enemy e = iterE.next();
             shapeRenderer.rect(e.getRectangle().x, e.getRectangle().y, e.getRectangle().width, e.getRectangle().height);
-            if(e.getBullet() != null)
-                shapeRenderer.rect(e.getBullet().getRectangle().x, e.getBullet().getRectangle().y, e.getBullet().getRectangle().width, e.getBullet().getRectangle().height);
+        }
+        
+        Iterator<EnemyBullet> iterEnemyBullet = enemyManager.getEnemyBullets().iterator();
+        while(iterEnemyBullet.hasNext())
+        {
+            EnemyBullet b = iterEnemyBullet.next();
+            shapeRenderer.rect(b.getRectangle().x, b.getRectangle().y, b.getRectangle().width, b.getRectangle().height);
         }
         
         shapeRenderer.end();
@@ -110,14 +116,16 @@ public class LevelScreen extends ScreenAdapter
         
         while(iterBullet.hasNext())
         {
-            Iterator<Enemy> iterEnemy = enemies.iterator();
             Bullet b = iterBullet.next();
+            
+            Iterator<Enemy> iterEnemy = enemies.iterator();
             while(iterEnemy.hasNext())
             {
                 Enemy e = iterEnemy.next();
                 if(e.getRectangle().overlaps(b.getRectangle()))
                 {
-                    iterBullet.remove();
+                    System.out.println("Bullet destroyed");
+                    b.setActive(false);
                     enemyManager.addExplosion(e.getX(), e.getY());
                     
                     switch(e.getType())
@@ -127,7 +135,6 @@ public class LevelScreen extends ScreenAdapter
                         case 2: score += 30; break;
                     }
                     iterEnemy.remove();
-                    //e.setActive(false);
                 }
             }
         }

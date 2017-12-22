@@ -9,7 +9,7 @@ import red.sub.spaceinvaders.GameState.LevelScreen;
 /**
  * @author Marlin Jurczik
  */
-public class EnemyBullet 
+public class EnemyBullet
 {
     public static final int WIDTH = 3;
     public static final int HEIGHT = 7;
