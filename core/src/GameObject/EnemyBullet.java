@@ -57,4 +57,9 @@ public class EnemyBullet
     {
         return collsionRec;
     }
+
+    public void setActive(boolean active)
+    {
+        this.active = active;
+    }
 }

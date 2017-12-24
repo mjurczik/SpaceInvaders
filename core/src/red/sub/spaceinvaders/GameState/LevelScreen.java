@@ -70,7 +70,7 @@ public class LevelScreen extends ScreenAdapter
              
         batch.begin();
         FontLoader.scoreFont.draw(batch, "Score: " + score, 2, 2);
-        FontLoader.scoreFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 200, 2);
+        FontLoader.scoreFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 150, 2);
         ship.render(batch);
         enemyManager.render(batch);
         batch.end();
@@ -90,12 +90,13 @@ public class LevelScreen extends ScreenAdapter
             shapeRenderer.rect(b.getRectangle().x, b.getRectangle().y, b.getRectangle().width, b.getRectangle().height);
         }
         
-        Iterator<Enemy> iterE = enemyManager.getEnemies().iterator();
-        while(iterE.hasNext())
-        {
-            Enemy e = iterE.next();
-            shapeRenderer.rect(e.getRectangle().x, e.getRectangle().y, e.getRectangle().width, e.getRectangle().height);
-        }
+        for(int x = 0; x < enemyManager.getEnemies().length; x++)
+            for(int y = 0; y < enemyManager.getEnemies()[0].length; y++)
+            {
+                Enemy e = enemyManager.getEnemies()[x][y];
+                if(e.isActive())
+                    shapeRenderer.rect(e.getRectangle().x, e.getRectangle().y, e.getRectangle().width, e.getRectangle().height);
+            }
         
         Iterator<EnemyBullet> iterEnemyBullet = enemyManager.getEnemyBullets().iterator();
         while(iterEnemyBullet.hasNext())
@@ -110,7 +111,7 @@ public class LevelScreen extends ScreenAdapter
     private void checkCollision()
     {
         Array<Bullet> bullets = ship.getBullets();
-        Array<Enemy> enemies = enemyManager.getEnemies();
+        Enemy[][] enemies = enemyManager.getEnemies();
         
         Iterator<Bullet> iterBullet = bullets.iterator();
         
@@ -118,24 +119,37 @@ public class LevelScreen extends ScreenAdapter
         {
             Bullet b = iterBullet.next();
             
-            Iterator<Enemy> iterEnemy = enemies.iterator();
-            while(iterEnemy.hasNext())
+            Iterator<EnemyBullet> iterEnemyBullet = enemyManager.getEnemyBullets().iterator();
+            while(iterEnemyBullet.hasNext())
             {
-                Enemy e = iterEnemy.next();
-                if(e.getRectangle().overlaps(b.getRectangle()))
+                EnemyBullet eb = iterEnemyBullet.next();
+                if(eb.getRectangle().overlaps(b.getRectangle()))
                 {
-                    System.out.println("Bullet destroyed");
                     b.setActive(false);
-                    enemyManager.addExplosion(e.getX(), e.getY());
-                    
-                    switch(e.getType())
-                    {
-                        case 0: score += 20; break;
-                        case 1: score += 10; break;
-                        case 2: score += 30; break;
-                    }
-                    iterEnemy.remove();
+                    eb.setActive(false);
                 }
+            }
+            
+            if(b.isActive())
+            {
+                for(int x = 0; x < enemies.length; x++)
+                    for(int y = 0; y < enemies[0].length; y++)
+                    {
+                        Enemy e = enemies[x][y];
+                        if(e.isActive() && e.getRectangle().overlaps(b.getRectangle()))
+                        {
+                            b.setActive(false);
+                            e.setActive(false);
+                            enemyManager.addExplosion(e.getX(), e.getY());
+
+                            switch(e.getType())
+                            {
+                                case 0: score += 20; break;
+                                case 1: score += 10; break;
+                                case 2: score += 30; break;
+                            }
+                        }
+                    }
             }
         }
     }

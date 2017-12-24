@@ -64,7 +64,6 @@ public class Enemy implements Comparable<Enemy>
         
         collisionRec.x = x;
         collisionRec.y = y;
-        
     }
     
     @Override
