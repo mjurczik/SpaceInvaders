@@ -3,7 +3,6 @@ package red.sub.spaceinvaders.desktop;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.math.Vector2;
 import red.sub.spaceinvaders.GameState.LevelScreen;
 import red.sub.spaceinvaders.SpaceInvaders;
 

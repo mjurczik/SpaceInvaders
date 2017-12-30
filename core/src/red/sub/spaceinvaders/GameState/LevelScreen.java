@@ -6,6 +6,7 @@ import GameObject.Bullet;
 import GameObject.Enemy;
 import GameObject.EnemyBullet;
 import GameObject.EnemyManager;
+import GameObject.ShieldManager;
 import GameObject.Ship;
 import Listener.LevelKeyListener;
 import Tools.FontLoader;
@@ -26,15 +27,18 @@ public class LevelScreen extends ScreenAdapter
 {
     public static final int GAME_HEIGHT = 224;
     public static final int GAME_WIDTH = 240;
+    private static final int Y_OFFSET = 2;
     
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Ship ship;
     private EnemyManager enemyManager;
+    private ShieldManager shieldManager;
     
     private ShapeRenderer shapeRenderer;
     
-    private int score;
+    private int score = 0;
+    private int lifes = 3;
  
     public LevelScreen(SpriteBatch batch)
     {
@@ -49,6 +53,7 @@ public class LevelScreen extends ScreenAdapter
         
         ship = new Ship();
         enemyManager = new EnemyManager();
+        shieldManager = new ShieldManager(enemyManager);
         
         shapeRenderer = new ShapeRenderer();
         
@@ -62,20 +67,37 @@ public class LevelScreen extends ScreenAdapter
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
         batch.setProjectionMatrix(camera.combined);
-        
+                
+        checkCollision();
         ship.update();
         enemyManager.update();
-        checkCollision();
+        shieldManager.update();
+        enemyManager.setActive(ship.isActive());
         
-             
         batch.begin();
-        FontLoader.scoreFont.draw(batch, "Score: " + score, 2, 2);
-        FontLoader.scoreFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 150, 2);
+        FontLoader.scoreFont.draw(batch, "Score: " + score, 2, Y_OFFSET);
+        //FontLoader.scoreFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 150, Y_OFFSET);
+        drawLifes();
         ship.render(batch);
         enemyManager.render(batch);
+        shieldManager.render(batch);
         batch.end();
         
-        drawDebug();
+        //drawDebug();
+    }
+    
+    private void drawLifes()
+    {
+        batch.setColor(Color.RED);
+        //int width_offset = GAME_WIDTH / 2 - ((ship.getShipTexture().getWidth() * lifes) / 2);
+        int width_offset = 5;
+        int life_offset = 5;
+        for(int i = 0; i < lifes; i++)
+        {
+            batch.draw(ship.getShipTexture(), width_offset + ship.getShipTexture().getWidth() * i + (life_offset* i), GAME_HEIGHT - ship.getShipTexture().getHeight() - Y_OFFSET);
+        }
+        
+        batch.setColor(Color.WHITE);
     }
     
     private void drawDebug()
@@ -150,6 +172,19 @@ public class LevelScreen extends ScreenAdapter
                             }
                         }
                     }
+            }
+        }
+        
+        Iterator<EnemyBullet> iterEnemyBullet = enemyManager.getEnemyBullets().iterator();
+        
+        while(iterEnemyBullet.hasNext())
+        {
+            EnemyBullet e = iterEnemyBullet.next();
+            if(e.isActive() && e.getRectangle().overlaps(ship.getRectangle()))
+            {
+                e.setActive(false);
+                ship.setActive(false);
+                lifes--;
             }
         }
     }

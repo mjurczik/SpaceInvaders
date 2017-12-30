@@ -49,8 +49,11 @@ public class EnemyManager
     private long lastEnemyBulletDrop = 0;
     private long updateLastEBulletDrop = 500;
     
+    private boolean active;
+    
     public EnemyManager()
     {
+        active = true;
         explosions = new Array<Explosion>();
         enemyBullets = new Array<EnemyBullet>();
         loadTextures();
@@ -92,10 +95,13 @@ public class EnemyManager
     
     public void update()
     {
-        updateExplosions();
-        updateEnemies();
-        updateBullets();
-        spawnBullets();
+        if(active)
+        {
+            updateExplosions();
+            updateEnemies();
+            updateBullets();
+            spawnBullets();
+        }
         //checkProgress();
     }
     
@@ -244,6 +250,11 @@ public class EnemyManager
     public Array<EnemyBullet> getEnemyBullets()
     {
         return enemyBullets;
+    }
+    
+    public void setActive(boolean active)
+    {
+        this.active = active;
     }
     
     public void addExplosion(float x, float y)
