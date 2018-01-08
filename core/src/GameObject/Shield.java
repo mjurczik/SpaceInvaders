@@ -25,6 +25,7 @@ public class Shield
     
     private Rectangle collisionRec;
     private Texture shieldTex;
+    private Sprite tmpSprite;
     
     public Shield(int x, int y)
     {
@@ -37,7 +38,10 @@ public class Shield
     
     public void render(SpriteBatch batch)
     {
-        batch.draw(shieldTex, x, y);
+        tmpSprite = new Sprite(shieldTex);
+        tmpSprite.setFlip(false, true);
+        
+        batch.draw(tmpSprite, x, y);
     }
     
     public void dispose()

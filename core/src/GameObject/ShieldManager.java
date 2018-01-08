@@ -19,6 +19,8 @@ import red.sub.spaceinvaders.GameState.LevelScreen;
  */
 public class ShieldManager 
 {
+    private static final Color TRANSPARENT_COL = new Color(0, 0, 0, 1);
+    private static final Color DAMAGED_COL = new Color(0.5f, 0.5f, 0.5f, 0.4f);
     private EnemyManager eMan;
     private final int capacity = 4;
     private Array<Shield> shields;
@@ -52,8 +54,7 @@ public class ShieldManager
     
     public void checkCollision()
     {
-        Array<EnemyBullet> enemyBullets = eMan.getEnemyBullets();
-        Iterator<EnemyBullet> iterEnemyBullets = enemyBullets.iterator();
+        Iterator<EnemyBullet> iterEnemyBullets = eMan.getEnemyBullets().iterator();
         while(iterEnemyBullets.hasNext())
         {
             EnemyBullet b = iterEnemyBullets.next();
@@ -69,7 +70,6 @@ public class ShieldManager
                     {
                         b.setActive(false);
                         s.updateTexture(updatedPixmap);
-                        //set new pixmap as shield texture
                     }
                 }
             }
@@ -85,11 +85,34 @@ public class ShieldManager
             for(int y = 0; y < sP.getHeight(); y++)
             {
                 if(colP.x == x + s.getX() && colP.y == y + s.getY() && sP.getPixel(x, y) == -1)
-                {
-                    sP.setColor(Color.RED);
-                    sP.drawPixel(x, y);
-                    System.out.println("Bullet: " + colP.x + "|" + colP.y + " Pixmap absolute " + (x+s.getX()) + "|" + (y+s.getY()) + " relative " + x+ "|" + y);
-                    active = false;
+                {   
+                    for(int pX = -1; pX < 2; pX++)
+                        for(int pY = -1; pY < 2; pY++)
+                        {
+                            int neighbour_x = x + pX;
+                            int neighbour_y = y + pY;
+                            
+                            if(pX == 0 && pY == 0)
+                            {
+                                sP.setColor(TRANSPARENT_COL);
+                                sP.drawPixel(x, y);
+                            }
+                            else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_x > sP.getWidth() || neighbour_y > sP.getHeight())
+                            {
+                                
+                            }
+                            else if(sP.getPixel(neighbour_x, neighbour_y) == -1)
+                            {
+                                sP.setColor(DAMAGED_COL);
+                                sP.drawPixel(neighbour_x, neighbour_y);
+                            }
+                            else
+                            {
+                                sP.setColor(TRANSPARENT_COL);
+                                sP.drawPixel(neighbour_x, neighbour_y);
+                            }
+                        }
+                    //System.out.println("Bullet: " + colP.x + "|" + colP.y + " Pixmap absolute " + (x+s.getX()) + "|" + (y+s.getY()) + " relative " + x+ "|" + y);
                     return sP;
                 }
             }
