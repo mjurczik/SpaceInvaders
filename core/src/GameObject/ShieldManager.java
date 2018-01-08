@@ -8,6 +8,7 @@ package GameObject;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import java.awt.Point;
 import java.util.Iterator;
@@ -19,16 +20,19 @@ import red.sub.spaceinvaders.GameState.LevelScreen;
  */
 public class ShieldManager 
 {
-    private static final Color TRANSPARENT_COL = new Color(0, 0, 0, 1);
-    private static final Color DAMAGED_COL = new Color(0.5f, 0.5f, 0.5f, 0.4f);
+    private static final Color TRANSPARENT_COL = new Color(Color.BLACK);
+    private static final int DAMAGE_RANGE = 2;
+    
     private EnemyManager eMan;
+    private Ship ship;
     private final int capacity = 4;
     private Array<Shield> shields;
     private boolean active;
     
-    public ShieldManager(EnemyManager eMan)
+    public ShieldManager(EnemyManager eMan, Ship ship)
     {
         this.eMan = eMan;
+        this.ship = ship;
         shields = new Array<Shield>();
         initShields();
         active = true;
@@ -74,6 +78,27 @@ public class ShieldManager
                 }
             }
         }
+        
+        Iterator<Bullet> iterShipBullets = ship.getBullets().iterator();
+        while(iterShipBullets.hasNext())
+        {
+            Bullet b = iterShipBullets.next();
+            Iterator<Shield> iterShield = shields.iterator();
+            while(iterShield.hasNext())
+            {
+                Shield s = iterShield.next();
+                if(b.getRectangle().overlaps(s.getRectangle()))
+                {
+                    Point colPointBullet = new Point(MathUtils.round(b.getX()), MathUtils.round(b.getY()));
+                    Pixmap updatedPixmap = isPixelColission(colPointBullet, s);
+                    if(updatedPixmap != null)
+                    {
+                        b.setActive(false);
+                        s.updateTexture(updatedPixmap);
+                    }
+                }
+            }
+        }
     }
     
     
@@ -86,32 +111,8 @@ public class ShieldManager
             {
                 if(colP.x == x + s.getX() && colP.y == y + s.getY() && sP.getPixel(x, y) == -1)
                 {   
-                    for(int pX = -1; pX < 2; pX++)
-                        for(int pY = -1; pY < 2; pY++)
-                        {
-                            int neighbour_x = x + pX;
-                            int neighbour_y = y + pY;
-                            
-                            if(pX == 0 && pY == 0)
-                            {
-                                sP.setColor(TRANSPARENT_COL);
-                                sP.drawPixel(x, y);
-                            }
-                            else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_x > sP.getWidth() || neighbour_y > sP.getHeight())
-                            {
-                                
-                            }
-                            else if(sP.getPixel(neighbour_x, neighbour_y) == -1)
-                            {
-                                sP.setColor(DAMAGED_COL);
-                                sP.drawPixel(neighbour_x, neighbour_y);
-                            }
-                            else
-                            {
-                                sP.setColor(TRANSPARENT_COL);
-                                sP.drawPixel(neighbour_x, neighbour_y);
-                            }
-                        }
+                    sP.setColor(TRANSPARENT_COL);
+                    sP.fillCircle(x, y, DAMAGE_RANGE);
                     //System.out.println("Bullet: " + colP.x + "|" + colP.y + " Pixmap absolute " + (x+s.getX()) + "|" + (y+s.getY()) + " relative " + x+ "|" + y);
                     return sP;
                 }

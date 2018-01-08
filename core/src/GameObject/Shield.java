@@ -40,8 +40,8 @@ public class Shield
     {
         tmpSprite = new Sprite(shieldTex);
         tmpSprite.setFlip(false, true);
-        
-        batch.draw(tmpSprite, x, y);
+        tmpSprite.setPosition(x, y);
+        tmpSprite.draw(batch);
     }
     
     public void dispose()

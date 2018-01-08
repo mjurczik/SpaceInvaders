@@ -105,7 +105,15 @@ public class EnemyManager
         //checkProgress();
     }
     
-    private void checkProgress()
+    public boolean allEnemiesDead()
+    {
+        if(enemiesAlive() == 0)
+            return true;
+        else
+            return false;
+    }
+    
+    private int enemiesAlive()
     {
         int counter = 0;
         for(int x = 0; x < E_COUNT_X; x++)
@@ -115,10 +123,7 @@ public class EnemyManager
                     counter++;
             }
         
-        if(counter == 0)
-        {
-            initEnemies();
-        }
+        return counter;
     }
     
     private void updateExplosions()
@@ -135,7 +140,8 @@ public class EnemyManager
     
     private void updateEnemies()
     {
-        updateEnemyT = (E_COUNT_X * E_COUNT_Y * UPDATE_TIME_MULTIPLIER) + UPDATE_TIME_OFFSET;
+        updateEnemyT = (enemiesAlive() * UPDATE_TIME_MULTIPLIER) + UPDATE_TIME_OFFSET;
+        //updateEnemyT = 100;
         
         if(TimeUtils.millis() - lastUpdateEnemy > updateEnemyT)
         {

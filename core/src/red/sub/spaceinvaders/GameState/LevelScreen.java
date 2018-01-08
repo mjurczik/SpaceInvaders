@@ -53,7 +53,7 @@ public class LevelScreen extends ScreenAdapter
         
         ship = new Ship();
         enemyManager = new EnemyManager();
-        shieldManager = new ShieldManager(enemyManager);
+        shieldManager = new ShieldManager(enemyManager, ship);
         
         shapeRenderer = new ShapeRenderer();
         
@@ -68,6 +68,7 @@ public class LevelScreen extends ScreenAdapter
         shapeRenderer.setProjectionMatrix(camera.combined);
         batch.setProjectionMatrix(camera.combined);
                 
+        checkGameStatus();
         checkCollision();
         ship.update();
         enemyManager.update();
@@ -78,14 +79,38 @@ public class LevelScreen extends ScreenAdapter
         FontLoader.scoreFont.draw(batch, "Score: " + score, 2, Y_OFFSET);
         //FontLoader.scoreFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 150, Y_OFFSET);
         drawLifes();
+        
+        shieldManager.render(batch);
         ship.render(batch);
         enemyManager.render(batch);
-        shieldManager.render(batch);
         batch.end();
         
         //drawDebug();
     }
     
+    private void checkGameStatus()
+    {
+        if(enemyManager.allEnemiesDead())
+        {
+            //load next level
+        }
+        else if(lifes == 0 || isEnemyOutBounds())
+        {
+            //game over
+        }
+    }
+    
+    private boolean isEnemyOutBounds()
+    {
+        for(int x = 0; x < enemyManager.getEnemies().length; x++)
+            for(int y = 0; y < enemyManager.getEnemies()[0].length; y++)
+            {
+                Enemy e = enemyManager.getEnemies()[x][y];
+                if(e.getY() + e.getHeight() > ship.getY())
+                    return true;
+            }
+        return false;
+    }
     private void drawLifes()
     {
         batch.setColor(Color.RED);

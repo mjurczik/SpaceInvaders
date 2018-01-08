@@ -184,6 +184,11 @@ public class Ship
         return collisionRec;
     }
     
+    public float getY()
+    {
+        return y;
+    }
+    
     public boolean isActive()
     {
         return active;
