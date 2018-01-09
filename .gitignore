@@ -109,6 +109,15 @@ gradle-app.setting
 /ios/build/
 /ios-moe/build/
 
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+nbactions.xml
+
 ## OS Specific
 .DS_Store
 Thumbs.db
