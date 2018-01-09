@@ -19,7 +19,7 @@ Level 4
 
 Level 5
 - Gegner pulsieren rot
-- Geschwindigkeit +4
+- Geschwindigkeit + 4
 - Spiel kann nur mit controller gespielt werden
 
 Level 6

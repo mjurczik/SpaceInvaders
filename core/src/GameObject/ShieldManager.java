@@ -21,7 +21,7 @@ import red.sub.spaceinvaders.GameState.LevelScreen;
 public class ShieldManager 
 {
     private static final Color TRANSPARENT_COL = new Color(Color.BLACK);
-    private static final int DAMAGE_RANGE = 2;
+    private static final int DAMAGE_RANGE = 3;
     
     private EnemyManager eMan;
     private Ship ship;
