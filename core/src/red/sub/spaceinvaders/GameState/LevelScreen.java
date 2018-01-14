@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import java.util.Iterator;
+import red.sub.spaceinvaders.GameObject.StageManager;
 
 /**
  * @author Marlin Jurczik
@@ -27,18 +28,13 @@ public class LevelScreen extends ScreenAdapter
 {
     public static final int GAME_HEIGHT = 224;
     public static final int GAME_WIDTH = 240;
-    private static final int Y_OFFSET = 2;
     
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private Ship ship;
-    private EnemyManager enemyManager;
-    private ShieldManager shieldManager;
+    
+    private StageManager stageManager;
     
     private ShapeRenderer shapeRenderer;
-    
-    private int score = 0;
-    private int lifes = 3;
  
     public LevelScreen(SpriteBatch batch)
     {
@@ -51,13 +47,11 @@ public class LevelScreen extends ScreenAdapter
         //camera.setToOrtho(true);
         camera.setToOrtho(true, GAME_WIDTH, GAME_HEIGHT);
         
-        ship = new Ship();
-        enemyManager = new EnemyManager();
-        shieldManager = new ShieldManager(enemyManager, ship);
+        stageManager = new StageManager();
         
         shapeRenderer = new ShapeRenderer();
         
-        Gdx.input.setInputProcessor(new LevelKeyListener(this));
+        Gdx.input.setInputProcessor(new LevelKeyListener(stageManager));
     }
 
     @Override
@@ -68,63 +62,17 @@ public class LevelScreen extends ScreenAdapter
         shapeRenderer.setProjectionMatrix(camera.combined);
         batch.setProjectionMatrix(camera.combined);
                 
-        checkGameStatus();
-        checkCollision();
-        ship.update();
-        enemyManager.update();
-        shieldManager.update();
-        enemyManager.setActive(ship.isActive());
+        stageManager.update();
         
         batch.begin();
-        FontLoader.scoreFont.draw(batch, "Score: " + score, 2, Y_OFFSET);
         //FontLoader.scoreFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 150, Y_OFFSET);
-        drawLifes();
-        
-        shieldManager.render(batch);
-        ship.render(batch);
-        enemyManager.render(batch);
+        stageManager.render(batch);
         batch.end();
         
         //drawDebug();
     }
     
-    private void checkGameStatus()
-    {
-        if(enemyManager.allEnemiesDead())
-        {
-            //load next level
-        }
-        else if(lifes == 0 || isEnemyOutBounds())
-        {
-            //game over
-        }
-    }
-    
-    private boolean isEnemyOutBounds()
-    {
-        for(int x = 0; x < enemyManager.getEnemies().length; x++)
-            for(int y = 0; y < enemyManager.getEnemies()[0].length; y++)
-            {
-                Enemy e = enemyManager.getEnemies()[x][y];
-                if(e.getY() + e.getHeight() > ship.getY())
-                    return true;
-            }
-        return false;
-    }
-    private void drawLifes()
-    {
-        batch.setColor(Color.RED);
-        //int width_offset = GAME_WIDTH / 2 - ((ship.getShipTexture().getWidth() * lifes) / 2);
-        int width_offset = 5;
-        int life_offset = 5;
-        for(int i = 0; i < lifes; i++)
-        {
-            batch.draw(ship.getShipTexture(), width_offset + ship.getShipTexture().getWidth() * i + (life_offset* i), GAME_HEIGHT - ship.getShipTexture().getHeight() - Y_OFFSET);
-        }
-        
-        batch.setColor(Color.WHITE);
-    }
-    
+    /*
     private void drawDebug()
     {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -153,75 +101,11 @@ public class LevelScreen extends ScreenAdapter
         }
         
         shapeRenderer.end();
-    }
-    
-    private void checkCollision()
-    {
-        Array<Bullet> bullets = ship.getBullets();
-        Enemy[][] enemies = enemyManager.getEnemies();
-        
-        Iterator<Bullet> iterBullet = bullets.iterator();
-        
-        while(iterBullet.hasNext())
-        {
-            Bullet b = iterBullet.next();
-            
-            Iterator<EnemyBullet> iterEnemyBullet = enemyManager.getEnemyBullets().iterator();
-            while(iterEnemyBullet.hasNext())
-            {
-                EnemyBullet eb = iterEnemyBullet.next();
-                if(eb.getRectangle().overlaps(b.getRectangle()))
-                {
-                    b.setActive(false);
-                    eb.setActive(false);
-                }
-            }
-            
-            if(b.isActive())
-            {
-                for(int x = 0; x < enemies.length; x++)
-                    for(int y = 0; y < enemies[0].length; y++)
-                    {
-                        Enemy e = enemies[x][y];
-                        if(e.isActive() && e.getRectangle().overlaps(b.getRectangle()))
-                        {
-                            b.setActive(false);
-                            e.setActive(false);
-                            enemyManager.addExplosion(e.getX(), e.getY());
-
-                            switch(e.getType())
-                            {
-                                case 0: score += 20; break;
-                                case 1: score += 10; break;
-                                case 2: score += 30; break;
-                            }
-                        }
-                    }
-            }
-        }
-        
-        Iterator<EnemyBullet> iterEnemyBullet = enemyManager.getEnemyBullets().iterator();
-        
-        while(iterEnemyBullet.hasNext())
-        {
-            EnemyBullet e = iterEnemyBullet.next();
-            if(e.isActive() && e.getRectangle().overlaps(ship.getRectangle()))
-            {
-                e.setActive(false);
-                ship.setActive(false);
-                lifes--;
-            }
-        }
-    }
-    
-    public Ship getShip()
-    {
-        return ship;
-    }
+    }*/
     
     @Override
     public void dispose()
     {
-        ship.dispose();
+        stageManager.dispose();
     }
 }

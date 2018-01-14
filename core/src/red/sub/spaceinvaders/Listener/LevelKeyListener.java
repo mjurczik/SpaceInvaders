@@ -5,18 +5,18 @@ package red.sub.spaceinvaders.Listener;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
-import red.sub.spaceinvaders.GameState.LevelScreen;
+import red.sub.spaceinvaders.GameObject.StageManager;
 
 /**
  * @author Marlin Jurczik
  */
 public class LevelKeyListener extends InputAdapter
 {
-    private LevelScreen screen;
+    private StageManager stageMan;
     
-    public LevelKeyListener(LevelScreen screen)
+    public LevelKeyListener(StageManager screen)
     {
-        this.screen = screen;
+        this.stageMan = screen;
     }
 
     @Override
@@ -24,9 +24,9 @@ public class LevelKeyListener extends InputAdapter
     {
         switch(keycode)
         {
-            case Keys.LEFT: screen.getShip().setMoveLeft(false); break;
-            case Keys.RIGHT: screen.getShip().setMoveRight(false); break;
-            case Keys.SPACE: screen.getShip().setShoot(false); break;
+            case Keys.LEFT: stageMan.getShip().setMoveLeft(false); break;
+            case Keys.RIGHT: stageMan.getShip().setMoveRight(false); break;
+            case Keys.SPACE: stageMan.getShip().setShoot(false); break;
             default: break;
         }
         
@@ -38,9 +38,9 @@ public class LevelKeyListener extends InputAdapter
     {
         switch(keycode)
         {
-            case Keys.LEFT: screen.getShip().setMoveLeft(true);break;
-            case Keys.RIGHT: screen.getShip().setMoveRight(true);break;
-            case Keys.SPACE: screen.getShip().setShoot(true);break;
+            case Keys.LEFT: stageMan.getShip().setMoveLeft(true);break;
+            case Keys.RIGHT: stageMan.getShip().setMoveRight(true);break;
+            case Keys.SPACE: stageMan.getShip().setShoot(true);break;
             default: break;
         }
         
