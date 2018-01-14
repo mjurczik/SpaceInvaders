@@ -1,6 +1,6 @@
 /** Copyright by Marlin Jurczik **/
 
-package Tools;
+package red.sub.spaceinvaders.Tools;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;

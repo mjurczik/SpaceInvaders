@@ -1,6 +1,6 @@
 /** Copyright by Marlin Jurczik **/
 
-package GameObject;
+package red.sub.spaceinvaders.GameObject;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;

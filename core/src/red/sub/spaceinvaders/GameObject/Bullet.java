@@ -1,43 +1,46 @@
 /** Copyright by Marlin Jurczik **/
 
-package GameObject;
+package red.sub.spaceinvaders.GameObject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
-import red.sub.spaceinvaders.GameState.LevelScreen;
 
 /**
  * @author Marlin Jurczik
  */
-public class EnemyBullet
+public class Bullet 
 {
-    public static final int WIDTH = 3;
-    public static final int HEIGHT = 7;
-    
+    public static final int WIDTH = 1;
+    public static final int HEIGHT = 5;
     private float x;
     private float y;
-    private int speed = 50;
-    private Rectangle collsionRec;
+    private int speed = 200;
+    private boolean active; 
     
-    private boolean active;
+    private Rectangle collisionRec;
     
-    public EnemyBullet(float x,  float y)
+    public Bullet(float x, float y)
     {
         this.x = x;
         this.y = y;
-        collsionRec = new Rectangle(x, y, WIDTH, HEIGHT);
         active = true;
+        collisionRec = new Rectangle(x, y, WIDTH, HEIGHT);
     }
     
     public void update()
     {
-        y+= speed * Gdx.graphics.getDeltaTime();
-        collsionRec.y = y;
+        y -= speed * Gdx.graphics.getDeltaTime();
+        collisionRec.y = y;
         
-        if(y > LevelScreen.GAME_HEIGHT - HEIGHT)
+        if(y < 0)
             active = false;
     }
-
+    
+    public Rectangle getRectangle()
+    {
+        return collisionRec;
+    }
+    
     public float getX()
     {
         return x;
@@ -52,12 +55,7 @@ public class EnemyBullet
     {
         return active;
     }
-
-    public Rectangle getRectangle()
-    {
-        return collsionRec;
-    }
-
+    
     public void setActive(boolean active)
     {
         this.active = active;

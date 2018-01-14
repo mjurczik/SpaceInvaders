@@ -1,6 +1,6 @@
 /** Copyright by Marlin Jurczik **/
 
-package Listener;
+package red.sub.spaceinvaders.Listener;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;

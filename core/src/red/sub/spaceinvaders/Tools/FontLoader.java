@@ -1,6 +1,6 @@
 /** Copyright by Marlin Jurczik **/
 
-package Tools;
+package red.sub.spaceinvaders.Tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

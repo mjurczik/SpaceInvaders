@@ -1,6 +1,6 @@
 /** Copyright by Marlin Jurczik **/
 
-package GameObject;
+package red.sub.spaceinvaders.GameObject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

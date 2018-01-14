@@ -2,14 +2,14 @@
 
 package red.sub.spaceinvaders.GameState;
 
-import GameObject.Bullet;
-import GameObject.Enemy;
-import GameObject.EnemyBullet;
-import GameObject.EnemyManager;
-import GameObject.ShieldManager;
-import GameObject.Ship;
-import Listener.LevelKeyListener;
-import Tools.FontLoader;
+import red.sub.spaceinvaders.GameObject.Bullet;
+import red.sub.spaceinvaders.GameObject.Enemy;
+import red.sub.spaceinvaders.GameObject.EnemyBullet;
+import red.sub.spaceinvaders.GameObject.EnemyManager;
+import red.sub.spaceinvaders.GameObject.ShieldManager;
+import red.sub.spaceinvaders.GameObject.Ship;
+import red.sub.spaceinvaders.Listener.LevelKeyListener;
+import red.sub.spaceinvaders.Tools.FontLoader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
