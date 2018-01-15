@@ -60,7 +60,7 @@ public class EnemyManager
         initEnemies();
     }
     
-    private void initEnemies()
+    public void initEnemies()
     {
         enemies = new Enemy[E_COUNT_X][E_COUNT_Y];
         int enemySize = 15;

@@ -7,9 +7,12 @@ package red.sub.spaceinvaders.GameObject;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import java.util.Iterator;
+import red.sub.spaceinvaders.GameState.LevelScreen;
 import static red.sub.spaceinvaders.GameState.LevelScreen.GAME_HEIGHT;
+import red.sub.spaceinvaders.Tools.BitmapFontTools;
 import red.sub.spaceinvaders.Tools.FontLoader;
 
 /**
@@ -18,10 +21,17 @@ import red.sub.spaceinvaders.Tools.FontLoader;
  */
 public class StageManager 
 {
+    private static final String STAGE_STR = "Stage ";
+    private static final String SCORE_STR = "Score: ";
+    private static final String GAME_OVER_STR = "Game Over!";
+    
     private static final int Y_OFFSET = 2;
     private int currentStage;
     private int lifes = 3;
     private int score = 0;
+    private boolean isStageRunning;
+    private Vector2 scaleStr;
+    private boolean isGameOver;
     
     private Ship ship;
     private EnemyManager enemyManager;
@@ -30,6 +40,9 @@ public class StageManager
     public StageManager()
     {
         currentStage = 1;
+        isStageRunning = false;
+        isGameOver = false;
+        this.scaleStr = new Vector2(0, 0);
         
         ship = new Ship();
         enemyManager = new EnemyManager();
@@ -38,28 +51,60 @@ public class StageManager
     
     public void update()
     {
-        checkCollision();
-        checkGameStatus();
+        if(isStageRunning)
+        {        
+            checkCollision();
+            checkGameStatus();
 
-        ship.update();
-        enemyManager.update();
-        shieldManager.update();
-        enemyManager.setActive(ship.isActive());
+            ship.update();
+            enemyManager.update();
+            shieldManager.update();
+            enemyManager.setActive(ship.isActive());
+        }
+        else
+        {
+            scaleStr = scaleStr.lerp(new Vector2(1, 0), 0.1f);   
+        }
     }
     
     public void render(SpriteBatch batch)
-    {
-        FontLoader.scoreFont.draw(batch, "Score: " + score, 2, Y_OFFSET);
-        drawLifes(batch);
-        shieldManager.render(batch);
-        ship.render(batch);
-        enemyManager.render(batch);
+    {        
+        if(isStageRunning)
+        {
+            FontLoader.scoreFont.draw(batch, SCORE_STR + score, 2, Y_OFFSET);
+            drawLifes(batch);
+            shieldManager.render(batch);
+            ship.render(batch);
+            enemyManager.render(batch);
+        }
+        else
+        {
+            if(!isGameOver)
+            {
+                FontLoader.stageFont.getData().setScale(scaleStr.x);
+                FontLoader.stageFont.draw(batch, STAGE_STR + currentStage, LevelScreen.GAME_WIDTH/2 - BitmapFontTools.getStringWidth(FontLoader.stageFont, STAGE_STR + currentStage)/2, LevelScreen.GAME_HEIGHT/2 - BitmapFontTools.getStringHeight(FontLoader.stageFont, STAGE_STR + currentStage)/2);
+
+                if(scaleStr.x > 0.99)
+                {
+                    scaleStr.x = 0.01f;
+                    isStageRunning = true;
+                }
+            }
+            else
+            {
+                FontLoader.stageFont.getData().setScale(scaleStr.x);
+                FontLoader.stageFont.draw(batch, GAME_OVER_STR, LevelScreen.GAME_WIDTH/2 - BitmapFontTools.getStringWidth(FontLoader.stageFont, GAME_OVER_STR)/2, LevelScreen.GAME_HEIGHT/2 - BitmapFontTools.getStringHeight(FontLoader.stageFont, GAME_OVER_STR)/2);
+                if(scaleStr.x > 0.99)
+                {
+                    FontLoader.scoreFont.draw(batch, SCORE_STR + score , LevelScreen.GAME_WIDTH/2 - BitmapFontTools.getStringWidth(FontLoader.scoreFont, SCORE_STR + score) / 2, LevelScreen.GAME_HEIGHT/2 + BitmapFontTools.getStringHeight(FontLoader.scoreFont, SCORE_STR + score) + 10);
+                }
+            }
+        }
     }
     
     private void drawLifes(SpriteBatch batch)
     {
         batch.setColor(Color.RED);
-        //int width_offset = GAME_WIDTH / 2 - ((ship.getShipTexture().getWidth() * lifes) / 2);
         int width_offset = 5;
         int life_offset = 5;
         for(int i = 0; i < lifes; i++)
@@ -74,10 +119,15 @@ public class StageManager
     {
         if(enemyManager.allEnemiesDead())
         {
+            currentStage++;
+            isStageRunning = false;
+            enemyManager.initEnemies();
             //load next level
         }
         else if(lifes == 0 || isEnemyOutBounds())
         {
+            isStageRunning = false;
+            isGameOver = true;
             //game over
         }
     }

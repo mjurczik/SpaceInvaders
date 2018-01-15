@@ -17,7 +17,7 @@ public class FontLoader
     
     //different fonts
     public static BitmapFont bigMenuFont;
-    public static BitmapFont smallMenuFont;
+    public static BitmapFont stageFont;
     public static BitmapFont scoreFont;
     
     public static void loadFonts()
@@ -31,9 +31,9 @@ public class FontLoader
         param.flip = true;
         bigMenuFont = gen.generateFont(param);
         
-        param.size = 5;
+        param.size = 20;
         param.color = Color.YELLOW;
-        smallMenuFont = gen.generateFont(param);
+        stageFont = gen.generateFont(param);
         
         param.size = 10;
         param.color = Color.CYAN;

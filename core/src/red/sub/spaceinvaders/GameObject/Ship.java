@@ -37,7 +37,7 @@ public class Ship
     private boolean moveLeft = false;
     private boolean shoot = false;
     
-    private long shipDeathTime = 4000;
+    private long shipDeathTime = 2000;
     private long lastShipDeathTime;
     
     private int frameIdExplosion = 0;
